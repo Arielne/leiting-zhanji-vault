@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-tools/export.py — xuat vault markdown ra MOT file HTML duy nhat.
+tools/export.py — xuất vault markdown ra MỘT file HTML duy nhất.
 
-Vi sao ton tai:
-    Vault nay de doc luc dang choi, tren dien thoai, thuong la khong co mang.
-    Nen ban xuat phai la mot file .html tu chua: anh nhung base64, khong CDN,
-    khong font ngoai, mo bang trinh duyet nao cung chay.
+Vì sao tồn tại:
+    Vault này để đọc lúc đang chơi, trên điện thoại, thường là không có mạng.
+    Nên bản xuất phải là một file .html tự chứa: ảnh nhúng base64, không CDN,
+    không font ngoài, mở bằng trình duyệt nào cũng chạy.
 
-Nguyen tac:
-    - Markdown la BAN GOC. HTML la BAN XUAT. Khong bao gio sua nguoc lai.
-    - Khong de len _export/leiting_zhanji_wiki_v05.html (ban goc lich su).
-    - Khong dung thu vien ngoai. Chi stdlib.
+Nguyên tắc:
+    - Markdown là BẢN GỐC. HTML là BẢN XUẤT. Không bao giờ sửa ngược lại.
+    - Không đè lên _export/leiting_zhanji_wiki_v05.html (bản gốc lịch sử).
+    - Không dùng thư viện ngoài. Chỉ stdlib.
 
-Chay:
+Chạy:
     python tools/export.py
 
-Ket qua:
+Kết quả:
     _export/wiki.html
+
+Muốn xem trực tiếp trên điện thoại theo thời gian thực: xem tools/serve.py
 """
 from __future__ import annotations
 
@@ -28,7 +30,7 @@ import re
 import sys
 from pathlib import Path
 
-# Console Windows mac dinh cp1252, khong in duoc Han tu / tieng Viet co dau.
+# Console Windows mặc định cp1252, không in được Hán tự / tiếng Việt có dấu.
 for _stream in (sys.stdout, sys.stderr):
     try:
         _stream.reconfigure(encoding="utf-8", errors="replace")
@@ -40,14 +42,14 @@ ASSETS = ROOT / "_assets"
 EXPORT = ROOT / "_export"
 OUT = EXPORT / "wiki.html"
 
-# Khong bao gio ghi de nhung file nay.
+# Không bao giờ ghi đè những file này.
 PROTECTED = {"leiting_zhanji_wiki_v05.html"}
 
-# CLAUDE.md la huong dan cho tro ly, khong phai noi dung wiki -> khong xuat.
-# Muon xuat ca no thi xoa khoi tap hop nay.
+# CLAUDE.md là hướng dẫn cho trợ lý, không phải nội dung wiki -> không xuất.
+# Muốn xuất cả nó thì xoá khỏi tập hợp này.
 EXCLUDE = {"CLAUDE.md"}
 
-# Ghim len dau, truoc cac note danh so.
+# Ghim lên đầu, trước các note đánh số.
 PIN_FIRST = ["_CONTEXT.md"]
 
 MIME = {
@@ -55,14 +57,14 @@ MIME = {
     ".gif": "image/gif", ".webp": "image/webp", ".svg": "image/svg+xml",
 }
 
-warnings: list[str] = []
+canh_bao: list[str] = []
 
 
 # --------------------------------------------------------------------------
 # frontmatter
 # --------------------------------------------------------------------------
-def split_frontmatter(text):
-    """Tach khoi --- ... --- o dau file. Parser toi thieu, du cho vault nay."""
+def tach_frontmatter(text):
+    """Tách khối --- ... --- ở đầu file. Parser tối thiểu, đủ cho vault này."""
     lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
     if not lines or lines[0].strip() != "---":
         return {}, lines
@@ -91,39 +93,41 @@ def split_frontmatter(text):
 
 
 # --------------------------------------------------------------------------
-# anh
+# ảnh
 # --------------------------------------------------------------------------
-_img_cache = {}
+_bo_nho_anh = {}
 
 
-def data_uri(name):
-    if name in _img_cache:
-        return _img_cache[name]
-    path = ASSETS / name
-    if not path.is_file():
-        # thu tim khong phan biet hoa thuong
-        hit = None
+def data_uri(ten):
+    if ten in _bo_nho_anh:
+        return _bo_nho_anh[ten]
+    duong_dan = ASSETS / ten
+    if not duong_dan.is_file():
+        # thử tìm không phân biệt hoa thường
+        trung = None
         for p in ASSETS.glob("*"):
-            if p.name.lower() == name.lower():
-                hit = p
+            if p.name.lower() == ten.lower():
+                trung = p
                 break
-        if hit is None:
+        if trung is None:
             return None
-        path = hit
-    mime = MIME.get(path.suffix.lower(), "application/octet-stream")
-    uri = "data:%s;base64,%s" % (mime, base64.b64encode(path.read_bytes()).decode("ascii"))
-    _img_cache[name] = uri
+        duong_dan = trung
+    mime = MIME.get(duong_dan.suffix.lower(), "application/octet-stream")
+    uri = "data:%s;base64,%s" % (
+        mime, base64.b64encode(duong_dan.read_bytes()).decode("ascii"))
+    _bo_nho_anh[ten] = uri
     return uri
 
 
-def embed_image(name):
-    name = name.split("|")[0].strip()
-    uri = data_uri(name)
+def nhung_anh(ten):
+    ten = ten.split("|")[0].strip()
+    uri = data_uri(ten)
     if uri is None:
-        warnings.append("THIEU ANH: _assets/%s duoc nhung nhung khong tim thay file" % name)
-        return ('<span class="img-missing">chua co anh: <code>%s</code></span>'
-                % html.escape(name))
-    alt = html.escape(name, quote=True)
+        canh_bao.append(
+            "Thiếu ảnh: _assets/%s được nhúng nhưng không tìm thấy file" % ten)
+        return ('<span class="img-missing">chưa có ảnh: <code>%s</code></span>'
+                % html.escape(ten))
+    alt = html.escape(ten, quote=True)
     return ('<a class="shot" href="%s" target="_blank" rel="noopener">'
             '<img loading="lazy" alt="%s" title="%s" src="%s"></a>'
             % (uri, alt, alt, uri))
@@ -133,47 +137,48 @@ def embed_image(name):
 # inline
 # --------------------------------------------------------------------------
 def inline(text, ctx):
-    slots = []
+    o = []
 
-    def keep(frag):
-        slots.append(frag)
-        return "\x00%d\x01" % (len(slots) - 1)
+    def giu(frag):
+        o.append(frag)
+        return "\x00%d\x01" % (len(o) - 1)
 
-    # ![[anh.jpg]] — phai xu ly truoc [[...]]
-    text = re.sub(r"!\[\[([^\]]+?)\]\]", lambda m: keep(embed_image(m.group(1))), text)
+    # ![[ảnh.jpg]] — phải xử lý trước [[...]]
+    text = re.sub(r"!\[\[([^\]]+?)\]\]", lambda m: giu(nhung_anh(m.group(1))), text)
     # `code`
     text = re.sub(r"`([^`\n]+)`",
-                  lambda m: keep("<code>%s</code>" % html.escape(m.group(1))), text)
-    # [[note]] hoac [[note|nhan]]
+                  lambda m: giu("<code>%s</code>" % html.escape(m.group(1))), text)
+    # [[note]] hoặc [[note|nhãn]]
     text = re.sub(r"\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]",
-                  lambda m: keep(wikilink(m.group(1).strip(), m.group(2), ctx)), text)
-    # [nhan](url)
+                  lambda m: giu(wikilink(m.group(1).strip(), m.group(2), ctx)), text)
+    # [nhãn](url)
     text = re.sub(
         r"\[([^\]\n]+?)\]\(([^)\s]+)\)",
-        lambda m: keep('<a href="%s" target="_blank" rel="noopener">%s</a>'
-                       % (html.escape(m.group(2), quote=True), html.escape(m.group(1)))),
+        lambda m: giu('<a href="%s" target="_blank" rel="noopener">%s</a>'
+                      % (html.escape(m.group(2), quote=True),
+                         html.escape(m.group(1)))),
         text)
 
     text = html.escape(text)
     text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
     text = re.sub(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", r"<em>\1</em>", text)
 
-    return re.sub(r"\x00(\d+)\x01", lambda m: slots[int(m.group(1))], text)
+    return re.sub(r"\x00(\d+)\x01", lambda m: o[int(m.group(1))], text)
 
 
-def wikilink(target, label, ctx):
-    stem = target.split("#")[0].strip()
-    shown = html.escape(label.strip() if label else target)
-    anchor = ctx["anchors"].get(stem.lower())
-    if anchor:
-        return '<a class="wl" href="#%s">%s</a>' % (anchor, shown)
-    # Chua co note tuong ung — danh dau, dung tao link chet.
-    warnings.append("WIKILINK CHUA CO NOTE: [[%s]]" % target)
-    return '<span class="wl-missing" title="chua co note nay">%s</span>' % shown
+def wikilink(dich, nhan, ctx):
+    ten = dich.split("#")[0].strip()
+    hien = html.escape(nhan.strip() if nhan else dich)
+    neo = ctx["neo"].get(ten.lower())
+    if neo:
+        return '<a class="wl" href="#%s">%s</a>' % (neo, hien)
+    # Chưa có note tương ứng — đánh dấu, đừng tạo link chết.
+    canh_bao.append("Wikilink chưa có note: [[%s]]" % dich)
+    return '<span class="wl-missing" title="chưa có note này">%s</span>' % hien
 
 
-def plain(text):
-    """Bo markup, dung lam khoa localStorage on dinh."""
+def bo_markup(text):
+    """Bỏ markup, dùng làm khoá localStorage ổn định."""
     text = re.sub(r"!?\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]", r"\1", text)
     text = re.sub(r"\[([^\]]+?)\]\([^)]*\)", r"\1", text)
     text = re.sub(r"[*`~#>]", "", text)
@@ -199,20 +204,20 @@ CALLOUT_ICON = {
 }
 
 
-def is_table_sep(line):
+def la_vach_bang(line):
     s = line.strip()
     if "|" not in s or "-" not in s:
         return False
-    cells = [c.strip() for c in s.strip("|").split("|")]
-    return bool(cells) and all(re.fullmatch(r":?-{1,}:?", c) for c in cells)
+    o = [c.strip() for c in s.strip("|").split("|")]
+    return bool(o) and all(re.fullmatch(r":?-{1,}:?", c) for c in o)
 
 
-def split_row(line):
+def tach_hang(line):
     return [c.strip() for c in line.strip().strip("|").split("|")]
 
 
-def blocks(lines, ctx, key):
-    out = []
+def khoi(lines, ctx, khoa):
+    ra = []
     i, n = 0, len(lines)
 
     while i < n:
@@ -223,7 +228,7 @@ def blocks(lines, ctx, key):
             i += 1
             continue
 
-        # khoi code
+        # khối code
         if s.startswith("```"):
             i += 1
             buf = []
@@ -231,106 +236,106 @@ def blocks(lines, ctx, key):
                 buf.append(lines[i])
                 i += 1
             i += 1
-            out.append('<pre class="code"><code>%s</code></pre>'
-                       % html.escape("\n".join(buf)))
+            ra.append('<pre class="code"><code>%s</code></pre>'
+                      % html.escape("\n".join(buf)))
             continue
 
-        # tieu de
+        # tiêu đề
         m = HEAD_RE.match(s)
         if m:
-            lvl = min(len(m.group(1)) + 1, 6)   # '#' trong note -> h2, '##' -> h3 ...
-            out.append('<h%d class="md-h">%s</h%d>'
-                       % (lvl, inline(m.group(2).strip(), ctx), lvl))
+            cap = min(len(m.group(1)) + 1, 6)   # '#' trong note -> h2, '##' -> h3 ...
+            ra.append('<h%d class="md-h">%s</h%d>'
+                      % (cap, inline(m.group(2).strip(), ctx), cap))
             i += 1
             continue
 
-        # duong ke
+        # đường kẻ
         if HR_RE.match(line):
-            out.append("<hr>")
+            ra.append("<hr>")
             i += 1
             continue
 
-        # bang
-        if "|" in s and i + 1 < n and is_table_sep(lines[i + 1]):
-            head = split_row(lines[i])
-            aligns = []
-            for c in split_row(lines[i + 1]):
+        # bảng
+        if "|" in s and i + 1 < n and la_vach_bang(lines[i + 1]):
+            dau = tach_hang(lines[i])
+            can = []
+            for c in tach_hang(lines[i + 1]):
                 if c.startswith(":") and c.endswith(":"):
-                    aligns.append("center")
+                    can.append("center")
                 elif c.endswith(":"):
-                    aligns.append("right")
+                    can.append("right")
                 else:
-                    aligns.append("left")
+                    can.append("left")
             i += 2
-            body = []
+            than = []
             while i < n and "|" in lines[i] and lines[i].strip():
-                body.append(split_row(lines[i]))
+                than.append(tach_hang(lines[i]))
                 i += 1
             th = "".join('<th style="text-align:%s">%s</th>'
-                         % (aligns[k] if k < len(aligns) else "left", inline(c, ctx))
-                         for k, c in enumerate(head))
-            trs = []
-            for row in body:
-                tds = "".join('<td style="text-align:%s">%s</td>'
-                              % (aligns[k] if k < len(aligns) else "left", inline(c, ctx))
-                              for k, c in enumerate(row))
-                trs.append("<tr>%s</tr>" % tds)
-            out.append('<div class="tablewrap"><table><thead><tr>%s</tr></thead>'
-                       "<tbody>%s</tbody></table></div>" % (th, "".join(trs)))
+                         % (can[k] if k < len(can) else "left", inline(c, ctx))
+                         for k, c in enumerate(dau))
+            tr = []
+            for hang in than:
+                td = "".join('<td style="text-align:%s">%s</td>'
+                             % (can[k] if k < len(can) else "left", inline(c, ctx))
+                             for k, c in enumerate(hang))
+                tr.append("<tr>%s</tr>" % td)
+            ra.append('<div class="tablewrap"><table><thead><tr>%s</tr></thead>'
+                      "<tbody>%s</tbody></table></div>" % (th, "".join(tr)))
             continue
 
-        # callout Obsidian: > [!warning] Tieu de
+        # callout Obsidian: > [!warning] Tiêu đề
         m = CALLOUT_RE.match(s)
         if m:
-            kind = m.group(1).lower()
-            title = m.group(3).strip()
+            loai = m.group(1).lower()
+            tieu_de = m.group(3).strip()
             i += 1
-            inner_lines = []
+            trong = []
             while i < n and lines[i].lstrip().startswith(">"):
-                inner_lines.append(re.sub(r"^\s*>\s?", "", lines[i]))
+                trong.append(re.sub(r"^\s*>\s?", "", lines[i]))
                 i += 1
-            head = ('<div class="cal-head"><span class="cal-icon">%s</span><b>%s</b></div>'
-                    % (html.escape(CALLOUT_ICON.get(kind, "i")),
-                       inline(title, ctx) if title else html.escape(kind)))
-            body_html = blocks(inner_lines, ctx, key) if inner_lines else ""
-            out.append('<div class="callout cal-%s">%s%s</div>'
-                       % (html.escape(kind, quote=True), head, body_html))
+            dau = ('<div class="cal-head"><span class="cal-icon">%s</span><b>%s</b></div>'
+                   % (html.escape(CALLOUT_ICON.get(loai, "i")),
+                      inline(tieu_de, ctx) if tieu_de else html.escape(loai)))
+            than = khoi(trong, ctx, khoa) if trong else ""
+            ra.append('<div class="callout cal-%s">%s%s</div>'
+                      % (html.escape(loai, quote=True), dau, than))
             continue
 
-        # trich dan thuong
+        # trích dẫn thường
         if s.startswith(">"):
             buf = []
             while i < n and lines[i].lstrip().startswith(">"):
                 buf.append(re.sub(r"^\s*>\s?", "", lines[i]))
                 i += 1
-            out.append("<blockquote>%s</blockquote>" % blocks(buf, ctx, key))
+            ra.append("<blockquote>%s</blockquote>" % khoi(buf, ctx, khoa))
             continue
 
-        # danh sach
+        # danh sách
         if LIST_RE.match(line):
-            i, frag = parse_list(lines, i, ctx, key)
-            out.append(frag)
+            i, doan = doc_danh_sach(lines, i, ctx, khoa)
+            ra.append(doan)
             continue
 
-        # doan van
+        # đoạn văn
         buf = []
         while i < n and lines[i].strip():
             cur = lines[i]
             if (HEAD_RE.match(cur.strip()) or HR_RE.match(cur) or LIST_RE.match(cur)
                     or cur.lstrip().startswith(">") or cur.strip().startswith("```")):
                 break
-            if "|" in cur and i + 1 < n and is_table_sep(lines[i + 1]):
+            if "|" in cur and i + 1 < n and la_vach_bang(lines[i + 1]):
                 break
             buf.append(cur.strip())
             i += 1
         if buf:
-            out.append("<p>%s</p>" % inline(" ".join(buf), ctx))
+            ra.append("<p>%s</p>" % inline(" ".join(buf), ctx))
 
-    return "".join(out)
+    return "".join(ra)
 
 
-def parse_list(lines, i, ctx, key):
-    items = []
+def doc_danh_sach(lines, i, ctx, khoa):
+    muc = []
     n = len(lines)
     while i < n:
         line = lines[i]
@@ -341,74 +346,74 @@ def parse_list(lines, i, ctx, key):
             break
         m = LIST_RE.match(line)
         if not m:
-            # dong noi tiep cua item truoc
-            if items and (line.startswith("  ") or line.startswith("\t")):
-                items[-1][2] += " " + line.strip()
+            # dòng nối tiếp của mục trước
+            if muc and (line.startswith("  ") or line.startswith("\t")):
+                muc[-1][2] += " " + line.strip()
                 i += 1
                 continue
             break
-        items.append([len(m.group(1).expandtabs(4)),
-                      m.group(2) not in ("-", "*", "+"),
-                      m.group(3)])
+        muc.append([len(m.group(1).expandtabs(4)),
+                    m.group(2) not in ("-", "*", "+"),
+                    m.group(3)])
         i += 1
 
-    parts = []
-    stack = []
-    for indent, ordered, content in items:
-        tag = "ol" if ordered else "ul"
-        while stack and indent < stack[-1][0]:
-            parts.append("</li></%s>" % stack.pop()[1])
-        if not stack or indent > stack[-1][0]:
-            parts.append('<%s class="md-list">' % tag)
-            stack.append((indent, tag))
+    doan = []
+    ngan_xep = []
+    for thut, co_so, noi_dung in muc:
+        the = "ol" if co_so else "ul"
+        while ngan_xep and thut < ngan_xep[-1][0]:
+            doan.append("</li></%s>" % ngan_xep.pop()[1])
+        if not ngan_xep or thut > ngan_xep[-1][0]:
+            doan.append('<%s class="md-list">' % the)
+            ngan_xep.append((thut, the))
         else:
-            parts.append("</li>")
-        parts.append("<li>%s" % render_item(content, ctx, key))
-    while stack:
-        parts.append("</li></%s>" % stack.pop()[1])
-    return i, "".join(parts)
+            doan.append("</li>")
+        doan.append("<li>%s" % dung_muc(noi_dung, ctx, khoa))
+    while ngan_xep:
+        doan.append("</li></%s>" % ngan_xep.pop()[1])
+    return i, "".join(doan)
 
 
-def render_item(content, ctx, key):
-    m = TASK_RE.match(content.strip())
+def dung_muc(noi_dung, ctx, khoa):
+    m = TASK_RE.match(noi_dung.strip())
     if not m:
-        return inline(content, ctx)
-    done = m.group(1).lower() == "x"
-    text = m.group(2)
-    # Khoa bam theo NOI DUNG chu khong theo vi tri
-    # -> sap xep lai note khong lam mat tick.
-    slug = hashlib.sha1(plain(text).encode("utf-8")).hexdigest()[:10]
+        return inline(noi_dung, ctx)
+    xong = m.group(1).lower() == "x"
+    chu = m.group(2)
+    # Khoá bám theo NỘI DUNG chứ không theo vị trí
+    # -> sắp xếp lại note không làm mất tích.
+    ma = hashlib.sha1(bo_markup(chu).encode("utf-8")).hexdigest()[:10]
     return ('<label class="task"><input type="checkbox" data-save="%s/%s"%s>'
             "<span>%s</span></label>"
-            % (html.escape(key, quote=True), slug,
-               " checked" if done else "", inline(text, ctx)))
+            % (html.escape(khoa, quote=True), ma,
+               " checked" if xong else "", inline(chu, ctx)))
 
 
 # --------------------------------------------------------------------------
-# thu thap note
+# thu thập note
 # --------------------------------------------------------------------------
-def collect():
-    found = {}
+def thu_thap():
+    thay = {}
     for p in ROOT.glob("*.md"):
         if p.name not in EXCLUDE:
-            found[p.name] = p
-    ordered = []
-    for name in PIN_FIRST:
-        if name in found:
-            ordered.append(found.pop(name))
-    for k in sorted(found):
-        ordered.append(found[k])
-    return ordered
+            thay[p.name] = p
+    thu_tu = []
+    for ten in PIN_FIRST:
+        if ten in thay:
+            thu_tu.append(thay.pop(ten))
+    for k in sorted(thay):
+        thu_tu.append(thay[k])
+    return thu_tu
 
 
-def slugify(stem):
-    s = re.sub(r"[^a-zA-Z0-9_-]+", "-", stem).strip("-").lower()
+def tao_neo(ten_file):
+    s = re.sub(r"[^a-zA-Z0-9_-]+", "-", ten_file).strip("-").lower()
     return "n-" + (s or "note")
 
 
 # --------------------------------------------------------------------------
-# CSS / JS — giu tinh than ban v0.5: nen toi, tim kiem loc theo section,
-# checkbox luu bang localStorage.
+# CSS / JS — giữ tinh thần bản v0.5: nền tối, tìm kiếm lọc theo section,
+# checkbox lưu bằng localStorage.
 # --------------------------------------------------------------------------
 CSS = """
 :root{--bg:#050b14;--panel:#0b1a2d;--line:#1d4666;--cyan:#4ed5ff;--gold:#ffd765;
@@ -416,14 +421,14 @@ CSS = """
 --shadow:0 18px 50px rgba(0,0,0,.35)}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-/* overflow-x:hidden CHI dat tren html. Dat them tren body se ep body thanh
-   overflow-y:auto -> body tro thanh vung cuon -> thanh nav position:sticky
-   het dinh. Tran ngang da duoc chan bang .tablewrap{overflow-x:auto} va
-   overflow-wrap:anywhere ben duoi. */
+/* overflow-x:hidden CHỈ đặt trên html. Đặt thêm trên body sẽ ép body thành
+   overflow-y:auto -> body trở thành vùng cuộn -> thanh nav position:sticky
+   hết dính. Tràn ngang đã được chặn bằng .tablewrap{overflow-x:auto} và
+   overflow-wrap:anywhere bên dưới. */
 html{max-width:100%;overflow-x:hidden}
 body{max-width:100%}
-/* Khong dung background-attachment:fixed — iOS Safari render sai tren trang dai,
-   ma trang nay chinh la de doc tren dien thoai. Quang sang chi o phan dau trang. */
+/* Không dùng background-attachment:fixed — iOS Safari render sai trên trang dài,
+   mà trang này chính là để đọc trên điện thoại. Quầng sáng chỉ ở phần đầu trang. */
 html{background:#040910}
 body{margin:0;color:var(--text);background-color:#040910;
  background-image:radial-gradient(1100px 560px at 8% -4%,#173b6966,transparent 62%),
@@ -476,7 +481,6 @@ section{scroll-margin-top:74px;margin:26px 0}
  color:#cbeaff;font-size:11px;font-weight:800}
 .chip.date{border-color:#246b49;color:#9ef0bd;background:#0b281b}
 .chip.bad{border-color:#8b3b49;color:#ffb1ba;background:#2c1015}
-.chip.tag{border-color:#68409a;color:#dabfff;background:#211132}
 
 .card h2.md-h{font-size:20px;margin:22px 0 8px;padding-top:14px;
  border-top:1px solid #ffffff12;color:#fff}
@@ -484,7 +488,7 @@ section{scroll-margin-top:74px;margin:26px 0}
 .card h4.md-h,.card h5.md-h,.card h6.md-h{font-size:15px;margin:14px 0 5px;color:#bfe7ff}
 p{margin:9px 0}
 hr{border:0;border-top:1px solid #ffffff14;margin:18px 0}
-code{background:#071522;border:1px solid #173a55;border-radius:6px;padding:1px 5px;
+code{background:#071522;border:1px solid #173a55;border-radius:6px;padding:1px 4px;
  font-size:.9em;font-family:ui-monospace,Consolas,"Courier New",monospace}
 pre.code{background:#071522;border:1px solid #173a55;border-radius:12px;padding:12px;
  overflow:auto;margin:12px 0}
@@ -579,7 +583,7 @@ JS = """
  var secs=Array.prototype.slice.call(document.querySelectorAll('section'));
  var base=status?status.textContent:'';
 
- function filter(){
+ function loc(){
   var s=q.value.trim().toLowerCase();
   var hit=0;
   secs.forEach(function(sec){
@@ -590,12 +594,12 @@ JS = """
    if(ok)hit++;
   });
   if(none)none.style.display=(s&&hit===0)?'block':'none';
-  if(status)status.textContent=s?(hit+'/'+secs.length+' muc'):base;
+  if(status)status.textContent=s?(hit+'/'+secs.length+' mục'):base;
  }
- if(q){q.addEventListener('input',filter);}
+ if(q){q.addEventListener('input',loc);}
 
- // Checkbox luu bang localStorage. Khoa bam theo noi dung dong,
- // nen sap xep lai note khong lam mat tick.
+ // Checkbox lưu bằng localStorage. Khoá bám theo nội dung dòng,
+ // nên sắp xếp lại note không làm mất tích.
  document.querySelectorAll('[data-save]').forEach(function(el){
   var k='ltwiki:'+el.dataset.save;
   try{
@@ -609,7 +613,7 @@ JS = """
 })();
 """
 
-PAGE = """<!DOCTYPE html>
+TRANG = """<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="utf-8">
@@ -648,120 +652,140 @@ __BODY__
 
 
 # --------------------------------------------------------------------------
-# main
+# dựng trang
 # --------------------------------------------------------------------------
-def main():
-    if OUT.name in PROTECTED:
-        print("TU CHOI: %s nam trong danh sach khong duoc ghi de." % OUT.name)
-        return 2
-    EXPORT.mkdir(exist_ok=True)
+def dung_trang():
+    """Dựng nội dung HTML, trả về (chuỗi html, số note). Không ghi ra đĩa."""
+    canh_bao.clear()
+    _bo_nho_anh.clear()
 
-    files = collect()
+    files = thu_thap()
     if not files:
-        print("Khong tim thay file .md nao o goc vault.")
-        return 1
+        return None, 0
 
-    ctx = {"anchors": {}}
+    ctx = {"neo": {}}
     for p in files:
-        ctx["anchors"][p.stem.lower()] = slugify(p.stem)
+        ctx["neo"][p.stem.lower()] = tao_neo(p.stem)
 
     notes = []
     for path in files:
-        meta, body = split_frontmatter(path.read_text(encoding="utf-8"))
-        title = None
-        for k, ln in enumerate(body):
+        meta, than = tach_frontmatter(path.read_text(encoding="utf-8"))
+        tieu_de = None
+        for k, ln in enumerate(than):
             if ln.strip().startswith("# "):
-                title = ln.strip()[2:].strip()
-                body = body[:k] + body[k + 1:]
+                tieu_de = ln.strip()[2:].strip()
+                than = than[:k] + than[k + 1:]
                 break
-        if not title:
-            alias = meta.get("aliases")
-            title = alias[0] if isinstance(alias, list) and alias else path.stem
-        notes.append((path, meta, title, body))
+        if not tieu_de:
+            bi_danh = meta.get("aliases")
+            tieu_de = (bi_danh[0] if isinstance(bi_danh, list) and bi_danh
+                       else path.stem)
+        notes.append((path, meta, tieu_de, than))
 
     ctx_meta = {}
-    for path, meta, title, body in notes:
+    for path, meta, tieu_de, than in notes:
         if path.name == "_CONTEXT.md":
             ctx_meta = meta
             break
 
-    parts = []
+    phan = []
     nav = []
 
-    for path, meta, title, body in notes:
-        anchor = slugify(path.stem)
-        key = path.stem
-        nav.append('<a href="#%s">%s</a>' % (anchor, html.escape(title)))
+    for path, meta, tieu_de, than in notes:
+        neo = tao_neo(path.stem)
+        khoa = path.stem
+        nav.append('<a href="#%s">%s</a>' % (neo, html.escape(tieu_de)))
 
-        chips = []
+        # Chỉ hiện chip mang thông tin: ngày kiểm tra và cảnh báo độ tin cậy.
+        # Chip tag đã bỏ — nó chỉ lặp lại tên mục (#context, #slot, #tier...).
+        # Tag vẫn tìm kiếm được vì nằm trong data-search.
+        chip = []
         kt = meta.get("kiem-tra") or meta.get("kiem-tra-lan-cuoi")
         if kt:
-            chips.append('<span class="chip date">kiem tra: %s</span>' % html.escape(str(kt)))
+            chip.append('<span class="chip date">kiểm tra: %s</span>'
+                        % html.escape(str(kt)))
         else:
-            chips.append('<span class="chip bad">THIEU kiem-tra</span>')
-            warnings.append("THIEU kiem-tra trong frontmatter: %s" % path.name)
-        tags = meta.get("tags")
-        if isinstance(tags, list):
-            for t in tags:
-                if t != "leiting":
-                    chips.append('<span class="chip tag">#%s</span>' % html.escape(t))
+            chip.append('<span class="chip bad">thiếu ngày kiểm tra</span>')
+            canh_bao.append("Thiếu `kiem-tra` trong frontmatter: %s" % path.name)
         dtc = meta.get("do-tin-cay")
         if dtc:
-            chips.append('<span class="chip bad">%s</span>' % html.escape(str(dtc)))
+            chip.append('<span class="chip bad">%s</span>' % html.escape(str(dtc)))
 
-        hay = [path.stem, title]
-        alias = meta.get("aliases")
-        if isinstance(alias, list):
-            hay.extend(alias)
-        if isinstance(tags, list):
-            hay.extend(tags)
+        tim = [path.stem, tieu_de]
+        bi_danh = meta.get("aliases")
+        if isinstance(bi_danh, list):
+            tim.extend(bi_danh)
+        the = meta.get("tags")
+        if isinstance(the, list):
+            tim.extend(the)
+            tim.extend("#" + t for t in the)
 
-        parts.append(
+        phan.append(
             '<section id="%s" data-search="%s"><div class="card">'
             '<div class="sec-head"><h2>%s</h2><div class="chips">%s</div></div>'
             "%s</div></section>"
-            % (anchor,
-               html.escape(" ".join(hay), quote=True),
-               html.escape(title),
-               "".join(chips),
-               blocks(body, ctx, key))
+            % (neo,
+               html.escape(" ".join(tim), quote=True),
+               html.escape(tieu_de),
+               "".join(chip),
+               khoi(than, ctx, khoa))
         )
 
-    stamps = []
+    moc = []
     if ctx_meta.get("ban-game"):
-        stamps.append("<span>ban game: %s</span>" % html.escape(str(ctx_meta["ban-game"])))
+        moc.append("<span>bản game: %s</span>"
+                   % html.escape(str(ctx_meta["ban-game"])))
     if ctx_meta.get("kiem-tra-lan-cuoi"):
-        stamps.append("<span>kiem tra lan cuoi: %s</span>"
-                      % html.escape(str(ctx_meta["kiem-tra-lan-cuoi"])))
-    stamps.append("<span>%d note &middot; %d anh nhung</span>"
-                  % (len(notes), len(_img_cache)))
+        moc.append("<span>kiểm tra lần cuối: %s</span>"
+                   % html.escape(str(ctx_meta["kiem-tra-lan-cuoi"])))
+    moc.append("<span>%d ghi chú &middot; %d ảnh nhúng</span>"
+               % (len(notes), len(_bo_nho_anh)))
 
-    doc = (PAGE
+    doc = (TRANG
            .replace("__TITLE__", "Wiki 雷霆战机：集结 — trang bị, pilot, tier")
-           .replace("__EYEBROW__", "雷霆战机：集结〔Lôi Đình Chiến Cơ: Tập Kết〕 &middot; vault cá nhân")
+           .replace("__EYEBROW__",
+                    "雷霆战机：集结〔Lôi Đình Chiến Cơ: Tập Kết〕 &middot; vault cá nhân")
            .replace("__CSS__", CSS)
-           .replace("__STAMPS__", "".join(stamps))
+           .replace("__STAMPS__", "".join(moc))
            .replace("__NAV__", "".join(nav))
            .replace("__COUNT__", str(len(notes)))
-           .replace("__BODY__", "".join(parts))
+           .replace("__BODY__", "".join(phan))
            .replace("__JS__", JS))
+
+    return doc, len(notes)
+
+
+def xuat(im_lang=False):
+    """Dựng và ghi ra _export/wiki.html. Trả về số ký tự đã ghi, 0 nếu hỏng."""
+    if OUT.name in PROTECTED:
+        print("Từ chối: %s nằm trong danh sách không được ghi đè." % OUT.name)
+        return 0
+    EXPORT.mkdir(exist_ok=True)
+
+    doc, so_note = dung_trang()
+    if doc is None:
+        print("Không tìm thấy file .md nào ở gốc vault.")
+        return 0
 
     OUT.write_text(doc, encoding="utf-8")
 
-    print("Da xuat: %s" % OUT)
-    print("  %d note, %d anh nhung, %.0f KB"
-          % (len(notes), len(_img_cache), len(doc.encode("utf-8")) / 1024))
-    for path, meta, title, body in notes:
-        print("    - %-24s %s" % (path.name, title))
-    if warnings:
+    if not im_lang:
+        print("Đã xuất: %s" % OUT)
+        print("  %d ghi chú, %d ảnh nhúng, %.0f KB"
+              % (so_note, len(_bo_nho_anh), len(doc.encode("utf-8")) / 1024))
+    if canh_bao:
         print("")
-        print("Canh bao (%d):" % len(warnings))
-        for w in dict.fromkeys(warnings):
+        print("Cảnh báo (%d):" % len(canh_bao))
+        for w in dict.fromkeys(canh_bao):
             print("  ! %s" % w)
-    else:
+    elif not im_lang:
         print("")
-        print("Khong co canh bao.")
-    return 0
+        print("Không có cảnh báo.")
+    return len(doc)
+
+
+def main():
+    return 0 if xuat() else 1
 
 
 if __name__ == "__main__":

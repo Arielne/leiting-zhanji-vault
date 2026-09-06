@@ -105,7 +105,17 @@ _assets/               ảnh, đánh số theo thứ tự
 _export/               bản HTML xuất ra — CHỈ ĐỌC
 _inbox/                screenshot chưa xử lý
 tools/export.py        script xuất HTML
+tools/serve.py         xem trên điện thoại theo thời gian thực (cùng Wi-Fi)
 ```
+
+Xem trên điện thoại:
+
+```powershell
+python tools\serve.py
+```
+
+Mở URL nó in ra trên điện thoại (cùng Wi-Fi). Sửa markdown, lưu, trang tự tải lại.
+Không cần cài gì trên điện thoại. Ctrl+C để dừng.
 
 ---
 
