@@ -80,6 +80,10 @@ Tạo `tools/export.py`. Yêu cầu:
 
 Chạy thử một lần, mở file kết quả xác nhận ảnh hiện đúng, rồi báo lại.
 
+> [!done] Phase 0 hoàn tất — 2026-09-07
+> Vault ở `C:\Users\pc\Downloads\Obsi\Obsidian` (chủ vault chọn, ghi đè ưu tiên trong 0.1 — path này đã có sẵn trong `obsidian.json` nên Obsidian tự nhận).
+> Obsidian đã cài sẵn 1.12.7 tại `%LOCALAPPDATA%\Programs\Obsidian`. Git khởi tạo. `_inbox/` và `tools/export.py` đã tạo và chạy thử.
+
 ---
 
 ## Cấu trúc vault
