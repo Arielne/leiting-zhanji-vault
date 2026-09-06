@@ -1,0 +1,34 @@
+---
+aliases: [Nguồn]
+tags: [leiting, nguon]
+kiem-tra: 2026-09-07
+---
+
+# Nguồn kiểm chứng
+
+## Hiện hành — ưu tiên
+
+| Nguồn | Dùng để xác nhận |
+|---|---|
+| [TapTap — trang chính thức](https://www.taptap.cn/app/6987) | phiên bản/tình trạng game hiện tại |
+| [TapTap — 新手开荒指南](https://www.taptap.cn/moment/842112823717793747?group_id=2832) | route 永世决意 / 彻翼巡星 / 极速守卫 + ảnh thật trong game |
+| [TapTap — 整体攻略之装备选择](https://www.taptap.cn/moment/843966898776311935?group_id=2832) | giới hạn tiến giai = tổng bậc 2 phôi; tier tham khảo |
+| [TapTap — 长文攻略](https://www.taptap.cn/moment/844271018729015347?group_id=2832) | chi phí +7→+8, +8→+9, +9→+10; quy tắc +5/+3 → +8 |
+| [TapTap — 首充：从养成到巡航全攻略](https://www.taptap.cn/moment/734471428954394560) | route +6 trở lên; mốc 7+8+8+7 để mở 巡航 |
+| [TapTap — bài tinh tuyển](https://www.taptap.cn/app/6987/topic?type=elite) | mục lục guide chất lượng |
+| [233 — pilot](https://www.233leyuan.com/post-detail/1951716687607818085) | thứ tự 莉亚 → 塔迪斯 → 娜塔莉 |
+
+## Legacy — chỉ dùng cho công thức, KHÔNG dùng cho tier
+
+| Nguồn | Dùng để xác nhận |
+|---|---|
+| [18183 — 量子磁流炮](https://m.18183.com/leitingzhanji/youxiziliao/liaoji/217360.html) | 聚能电浆炮 + 超导电磁炮, hiệu ứng 贯穿+穿甲 |
+| [4399 — 极速守卫](https://news.4399.com/gonglue/ltzj/zhuangbei/lj/m/495364.html) | 超高速火炮 + 毁灭守卫 |
+
+> [!warning] Vì sao tách legacy
+> 18183 và 4399 là dữ liệu thời bản cũ. Chỉ dùng để xác nhận **công thức và cơ chế cơ bản**. Xếp hạng và khuyến nghị lấy từ TapTap 2025–2026.
+
+## Việc cần làm
+
+- [ ] Đối chiếu số hiệu bản game: file HTML v0.5 ghi 1.27.30 (cuối 08/2026), trang TapTap all-info ngày 07/09/2026 ghi 1.25.31 (13/07/2026). **Chưa xác minh được cái nào đúng** — mở game xem mục cài đặt để chốt.
+- [ ] Tìm ảnh xác minh cho các món T0/T1 đang để trống ở [[02-tier-chien-than]]
