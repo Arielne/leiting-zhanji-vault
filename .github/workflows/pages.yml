@@ -1,0 +1,73 @@
+name: Xuat wiki va dang len GitHub Pages
+
+# Moi lan push markdown len master: chay tools/export.py de dung lai wiki.html
+# roi dang thang len Pages. Nghia la chi can commit markdown, HTML tu dung lai.
+on:
+  push:
+    branches: [master]
+    paths:
+      - "*.md"
+      - "_assets/**"
+      - "tools/export.py"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Khong chay chong cheo hai lan dang cung luc.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  dung:
+    name: Dung wiki.html tu markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Xuat HTML tu markdown
+        run: python tools/export.py
+
+      - name: Kiem tra ket qua that su co noi dung
+        shell: bash
+        run: |
+          f=_export/wiki.html
+          test -f "$f" || { echo "Khong thay $f"; exit 1; }
+          kb=$(( $(wc -c < "$f") / 1024 ))
+          echo "Kich thuoc: ${kb} KB"
+          # Ban that phai nang vi anh nhung base64. Duoi 200 KB la anh bi mat.
+          test "$kb" -ge 200 || { echo "Qua nhe -- anh khong duoc nhung?"; exit 1; }
+          grep -q 'data:image/' "$f" || { echo "Khong tim thay anh nhung"; exit 1; }
+
+      - name: Dung thu muc site
+        run: |
+          mkdir -p site
+          cp _export/wiki.html site/index.html
+          cp _export/wiki.html site/wiki.html
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  dang:
+    name: Dang len Pages
+    needs: dung
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

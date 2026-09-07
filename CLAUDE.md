@@ -1,7 +1,20 @@
 # CLAUDE.md — Vault 雷霆战机：集结
 
 Đây là vault ghi chú cá nhân về game 雷霆战机：集结 (Lôi Đình Chiến Cơ: Tập Kết), server Trung Quốc.
-Không phải wiki công khai. Mục tiêu duy nhất: **giúp chủ vault ra quyết định nuôi trang bị cho đúng tài khoản của mình.**
+Mục tiêu duy nhất: **giúp chủ vault ra quyết định nuôi trang bị cho đúng tài khoản của mình.**
+
+> [!warning] Vault này ĐANG CÔNG KHAI trên Internet
+> Từ 07/09/2026, repo là public và bản HTML tự đăng lên GitHub Pages mỗi lần push.
+> Trước đây quy ước ghi "không phải wiki công khai" — điều đó **không còn đúng**, chủ vault
+> đã chọn đổi ngày 07/09/2026 để đọc được ngoài đường mà không cần bật máy tính.
+>
+> Hệ quả khi viết note: **mọi thứ commit lên đều công khai vĩnh viễn.** Đã có người tải hoặc
+> fork thì gỡ xuống cũng không thu hồi được. Đừng ghi vào vault: mật khẩu, mã nạp thẻ,
+> ID/số điện thoại tài khoản game, ảnh chụp có thông tin thanh toán.
+> Cấp trang bị và ảnh trang bị thì công khai bình thường, không sao.
+>
+> Nó vẫn **không phải wiki cộng đồng**: không cần đầy đủ, không cần trung lập, chỉ cần
+> đúng cho tài khoản của chủ vault. Đừng viết lại theo giọng wiki công cộng.
 
 Đọc `_CONTEXT.md` trước khi làm bất cứ việc gì.
 
@@ -168,6 +181,19 @@ Trong game chỉ có tiếng Trung. Luôn viết `强袭斗士〔Đấu Sĩ Cư�
 File HTML là **bản xuất**, markdown là **bản gốc**. Sửa markdown rồi chạy `tools/export.py`. Không bao giờ sửa thẳng vào HTML — hai bên lệch nhau thì sáu tháng sau không ai biết bên nào đúng.
 
 `_export/leiting_zhanji_wiki_v05.html` là bản gốc lịch sử, giữ nguyên vĩnh viễn, không đè.
+
+`_export/wiki.html` **không được git theo dõi** — nó là bản dựng, và GitHub Actions dựng
+lại từ markdown mỗi lần push. Commit nó vào chỉ tạo blob 811 KB mới mỗi lần xuất.
+Muốn có file offline thì chạy `tools/export.py` hoặc tải từ trang Pages.
+
+### 7. Đăng lên GitHub Pages
+
+`.github/workflows/pages.yml` chạy khi push thay đổi vào `*.md`, `_assets/`, hoặc
+`tools/export.py`. Nó chạy `export.py`, kiểm tra bản dựng đủ nặng và thật sự có ảnh
+nhúng, rồi đăng lên Pages.
+
+Nghĩa là quy trình thường ngày chỉ còn: sửa markdown → commit → push. Không cần chạy
+`export.py` tay trước khi push (vẫn nên chạy để xem trước tại chỗ).
 
 ---
 

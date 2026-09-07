@@ -6,7 +6,11 @@ kiem-tra-lan-cuoi: 2026-09-07
 
 # _CONTEXT — 雷霆战机：集结
 
-Vault cá nhân. Không phải wiki công khai, không cần đầy đủ, chỉ cần đúng cho tài khoản của tôi.
+Vault cá nhân, không cần đầy đủ, chỉ cần đúng cho tài khoản của tôi.
+
+> [!warning] Repo này công khai từ 07/09/2026
+> Mọi thứ tôi commit đều lên Internet vĩnh viễn. Không ghi mật khẩu, ID tài khoản game,
+> hay ảnh có thông tin thanh toán vào đây. Cấp trang bị và ảnh trang bị thì bình thường.
 
 ## Quy ước
 
