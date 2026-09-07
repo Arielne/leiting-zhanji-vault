@@ -16,6 +16,9 @@ kiem-tra: 2026-09-07
 | [TapTap — 长文攻略](https://www.taptap.cn/moment/844271018729015347?group_id=2832) | chi phí +7→+8, +8→+9, +9→+10; quy tắc +5/+3 → +8 |
 | [TapTap — 首充：从养成到巡航全攻略](https://www.taptap.cn/moment/734471428954394560) | route +6 trở lên; mốc 7+8+8+7 để mở 巡航 |
 | [TapTap — bài tinh tuyển](https://www.taptap.cn/app/6987/topic?type=elite) | mục lục guide chất lượng |
+| [TapTap — 新驾驶员系统规则和推荐](https://www.taptap.cn/moment/652332138598761150) | 6 bậc 潜能 + 1 共鸣技能; danh sách phi công thường/hiếm |
+| [TapTap — 整体攻略之驾驶员培养](https://www.taptap.cn/moment/676398055427147277) | 主驾驶 ăn 100%; nâng chủ động của lái chính trước |
+| [TapTap — 长文攻略 (驾驶员)](https://www.taptap.cn/moment/677867168733334992) | 莉亚 护盾 ~5s vô địch; 米尔娜 停火 6s |
 | [233 — pilot](https://www.233leyuan.com/post-detail/1951716687607818085) | thứ tự 莉亚 → 塔迪斯 → 娜塔莉 |
 
 ## Legacy — chỉ dùng cho công thức, KHÔNG dùng cho tier
@@ -32,3 +35,5 @@ kiem-tra: 2026-09-07
 
 - [ ] Đối chiếu số hiệu bản game: file HTML v0.5 ghi 1.27.30 (cuối 08/2026), trang TapTap all-info ngày 07/09/2026 ghi 1.25.31 (13/07/2026). **Chưa xác minh được cái nào đúng** — mở game xem mục cài đặt để chốt.
 - [ ] Tìm ảnh xác minh cho các món T0/T1 đang để trống ở [[02-tier-chien-than]]
+- [ ] **Danh sách phi công lệch nhau.** TapTap 07/09/2026 ghi thường: 布莱德, 克拉克, 巴利尔, 罗西纳 — hiếm: 罗伊, 莉亚, 维多利亚, 娜塔莉. Bảng ở [[03-pilot]] có 塔迪斯, 伊莲娜, 黛比 không nằm trong danh sách đó; ngược lại 米尔娜 và bậc 天字辈 thì vault chưa nhắc. Bài TapTap tự gọi là "**新**驾驶员系统" nên nhiều khả năng game làm lại phần này. **Chưa xác minh** — mở game xem danh sách phi công thật để chốt bảng nào đúng.
+- [ ] `chưa xác minh` — 4 slot 战神 có kỹ năng riêng không. Đã tìm ở TapTap 攻略 và 新手入门攻略, chưa thấy nhắc; chỉ một nguồn ngoài TapTap nói có "技能机制".
