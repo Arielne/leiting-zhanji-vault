@@ -4,13 +4,9 @@ ban-game: "1.27.30 (theo file HTML v0.5) — TapTap all-info ngày 07/09/2026 v�
 kiem-tra-lan-cuoi: 2026-09-07
 ---
 
-# _CONTEXT — 雷霆战机：集结
+# Quy ước & trạng thái tài khoản
 
 Vault cá nhân, không cần đầy đủ, chỉ cần đúng cho tài khoản của tôi.
-
-> [!warning] Repo này công khai từ 07/09/2026
-> Mọi thứ tôi commit đều lên Internet vĩnh viễn. Không ghi mật khẩu, ID tài khoản game,
-> hay ảnh có thông tin thanh toán vào đây. Cấp trang bị và ảnh trang bị thì bình thường.
 
 ## Quy ước
 

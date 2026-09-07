@@ -3,18 +3,8 @@
 Đây là vault ghi chú cá nhân về game 雷霆战机：集结 (Lôi Đình Chiến Cơ: Tập Kết), server Trung Quốc.
 Mục tiêu duy nhất: **giúp chủ vault ra quyết định nuôi trang bị cho đúng tài khoản của mình.**
 
-> [!warning] Vault này ĐANG CÔNG KHAI trên Internet
-> Từ 07/09/2026, repo là public và bản HTML tự đăng lên GitHub Pages mỗi lần push.
-> Trước đây quy ước ghi "không phải wiki công khai" — điều đó **không còn đúng**, chủ vault
-> đã chọn đổi ngày 07/09/2026 để đọc được ngoài đường mà không cần bật máy tính.
->
-> Hệ quả khi viết note: **mọi thứ commit lên đều công khai vĩnh viễn.** Đã có người tải hoặc
-> fork thì gỡ xuống cũng không thu hồi được. Đừng ghi vào vault: mật khẩu, mã nạp thẻ,
-> ID/số điện thoại tài khoản game, ảnh chụp có thông tin thanh toán.
-> Cấp trang bị và ảnh trang bị thì công khai bình thường, không sao.
->
-> Nó vẫn **không phải wiki cộng đồng**: không cần đầy đủ, không cần trung lập, chỉ cần
-> đúng cho tài khoản của chủ vault. Đừng viết lại theo giọng wiki công cộng.
+Repo public từ 07/09/2026, HTML tự đăng lên GitHub Pages mỗi lần push. Vẫn không phải
+wiki cộng đồng: không cần đầy đủ, không cần trung lập, đừng viết lại theo giọng wiki công cộng.
 
 Đọc `_CONTEXT.md` trước khi làm bất cứ việc gì.
 
@@ -229,5 +219,7 @@ Xem cuối `09-nguon.md`. Hiện có: đối chiếu số hiệu phiên bản ga
 - Không đổi cấu trúc thư mục hay đánh số lại file mà không hỏi.
 - Không xoá ảnh trong `_assets/` kể cả khi thấy trùng. Ảnh `19-quyet-y-vinh-the.jpg` trùng với `16` là cố ý giữ.
 - Không dịch tên Hán tự thành tiếng Việt rồi bỏ bản gốc.
+- Không ghi mật khẩu, mã nạp thẻ, ID/số điện thoại tài khoản game, hay ảnh có thông tin thanh toán vào vault. Repo public, commit lên là công khai vĩnh viễn. Cấp trang bị và ảnh trang bị thì bình thường.
+- **Không chèn callout cảnh báo, khối đính chính, hay ghi chú meta vào note của chủ vault.** Note là để đọc lúc đang chơi, không phải chỗ trưng bày cảnh báo. Thông tin loại đó thuộc về `CLAUDE.md`. Năm callout sẵn có trong `01`, `02`, `04`, `08`, `09` là của chủ vault — giữ nguyên.
 - **Không thêm dòng `Co-Authored-By: Claude ...` vào commit message.** Lịch sử git là hồ sơ công khai mang tên chủ vault. Chốt ngày 07/09/2026.
 - Toàn bộ lịch sử đã được viết lại ngày 07/09/2026 để gỡ dòng đó khỏi các commit đầu. **Không còn commit nào mang đồng-tác-giả.** Nếu thấy dòng đó xuất hiện lại tức là có phiên nào đó gắn nhầm — gỡ ngay.
