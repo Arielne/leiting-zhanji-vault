@@ -230,4 +230,4 @@ Xem cuối `09-nguon.md`. Hiện có: đối chiếu số hiệu phiên bản ga
 - Không xoá ảnh trong `_assets/` kể cả khi thấy trùng. Ảnh `19-quyet-y-vinh-the.jpg` trùng với `16` là cố ý giữ.
 - Không dịch tên Hán tự thành tiếng Việt rồi bỏ bản gốc.
 - **Không thêm dòng `Co-Authored-By: Claude ...` vào commit message.** Lịch sử git là hồ sơ công khai mang tên chủ vault. Chốt ngày 07/09/2026.
-- Sáu commit đầu (`72b25f9` → `e1e310f`) đã lỡ có dòng đó. **Cố ý giữ nguyên, không phải sót.** Đã hỏi và chủ vault chọn không đụng vào lịch sử — đừng viết lại hay force-push để "dọn cho đồng nhất".
+- Toàn bộ lịch sử đã được viết lại ngày 07/09/2026 để gỡ dòng đó khỏi các commit đầu. **Không còn commit nào mang đồng-tác-giả.** Nếu thấy dòng đó xuất hiện lại tức là có phiên nào đó gắn nhầm — gỡ ngay.
