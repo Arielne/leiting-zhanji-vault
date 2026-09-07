@@ -53,9 +53,16 @@ jobs:
           cp _export/wiki.html site/index.html
           cp _export/wiki.html site/wiki.html
 
+      # KHONG dat enablement: true o day. Token mac dinh cua Actions khong co
+      # quyen TAO site Pages -- se bao "Create Pages site failed: Resource not
+      # accessible by integration". Pages phai bat mot lan bang token ca nhan:
+      #
+      #     gh api -X POST repos/Arielne/leiting-zhanji-vault/pages \
+      #       -f build_type=workflow
+      #
+      # (Git Bash tren Windows: bo dau gach dau cua repos/... keo no doi
+      #  duong dan thanh C:/Program Files/Git/repos/...)
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
