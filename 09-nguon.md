@@ -27,13 +27,19 @@ kiem-tra: 2026-09-07
 |---|---|
 | [18183 — 量子磁流炮](https://m.18183.com/leitingzhanji/youxiziliao/liaoji/217360.html) | 聚能电浆炮 + 超导电磁炮, hiệu ứng 贯穿+穿甲 |
 | [4399 — 极速守卫](https://news.4399.com/gonglue/ltzj/zhuangbei/lj/m/495364.html) | 超高速火炮 + 毁灭守卫 |
+| [前瞻网 — 驾驶员 (07/2014)](https://www.qianzhan.com/game/detail/382/140712-9780a71e.html) | tên kỹ năng + chòm sao: 星辰守护, 希望之光, 充能火花, 蛮牛冲撞 |
+| [游侠 — 驾驶员玩法 (09/2014)](https://m.ali213.net/gonglue/140909/56720.html) | số liệu kỹ năng bản 2014 |
 
 > [!warning] Vì sao tách legacy
 > 18183 và 4399 là dữ liệu thời bản cũ. Chỉ dùng để xác nhận **công thức và cơ chế cơ bản**. Xếp hạng và khuyến nghị lấy từ TapTap 2025–2026.
+>
+> Bẫy riêng của phần phi công: 雷霆战机 (2014) và 雷霆战机：集结 (2025) **trùng tên phi công và trùng chòm sao**. Tìm "驾驶员 技能" ra rất nhiều số liệu chi tiết nhưng phần lớn là bài 2014. Xem ngày trong URL trước khi tin.
 
 ## Việc cần làm
 
 - [ ] Đối chiếu số hiệu bản game: file HTML v0.5 ghi 1.27.30 (cuối 08/2026), trang TapTap all-info ngày 07/09/2026 ghi 1.25.31 (13/07/2026). **Chưa xác minh được cái nào đúng** — mở game xem mục cài đặt để chốt.
 - [ ] Tìm ảnh xác minh cho các món T0/T1 đang để trống ở [[02-tier-chien-than]]
 - [ ] **Danh sách phi công lệch nhau.** TapTap 07/09/2026 ghi thường: 布莱德, 克拉克, 巴利尔, 罗西纳 — hiếm: 罗伊, 莉亚, 维多利亚, 娜塔莉. Bảng ở [[03-pilot]] có 塔迪斯, 伊莲娜, 黛比 không nằm trong danh sách đó; ngược lại 米尔娜 và bậc 天字辈 thì vault chưa nhắc. Bài TapTap tự gọi là "**新**驾驶员系统" nên nhiều khả năng game làm lại phần này. **Chưa xác minh** — mở game xem danh sách phi công thật để chốt bảng nào đúng.
+- [ ] **Đối chiếu kỹ năng phi công trong game.** Bảng legacy ở [[03-pilot]] lấy từ bản 2014. Riêng 星辰守护 của 莉亚: bản 2014 ghi "60s sinh 1 khiên", nguồn 集结 ghi "~5 giây vô địch" — hai mô tả không khớp. Mở game xem mô tả kỹ năng thật rồi ghi đè, giữ cả bản cũ kèm ngày.
+- [ ] Xác định 巨蟹座 và 天蝎座 ứng với phi công nào; 天鹰座 và 蛇夫座 tên là gì.
 - [ ] `chưa xác minh` — 4 slot 战神 có kỹ năng riêng không. Đã tìm ở TapTap 攻略 và 新手入门攻略, chưa thấy nhắc; chỉ một nguồn ngoài TapTap nói có "技能机制".
